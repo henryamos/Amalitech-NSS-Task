@@ -1,4 +1,5 @@
 import { useState,useEffect,useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import React from 'react'
 import Header from './components/Header';
 import Country from './components/Country';
@@ -11,9 +12,12 @@ function App() {
   const url = 'https://restcountries.com/v3.1/all';
   //  dark mode state : set to false //
   const [darkMode, setDarkMode] = useState(false);
-  //Search State
+  //Search State //
   const countriesInputRef = useRef();
   const regionRef = useRef();
+
+  //navigate //
+  const navigate = useNavigate()
   //Countries state //
   const [countries, setCountries] = useState([]);
 
@@ -61,35 +65,43 @@ function App() {
       fetchCountryData();
     }
   };
+
   // select region //
-  const selectRegion = () => {
-    const selectValue = regionRef.current.value;
-    if (selectValue.trim()) {
-      const fetchSelect = async () => {
-        const response = await fetch(
-          `https://restcountries.com/v3.1/region/${selectValue}`
-        );
+const selectRegion = () => {
+  const selectValue = regionRef.current.value;
+  if (selectValue.trim()) {
+    const fetchSelect = async () => {
+      try {
+        let url;
+        if (selectValue === 'All') {
+          url = 'https://restcountries.com/v3.1/all';
+        } else {
+          url = `https://restcountries.com/v3.1/region/${selectValue}`;
+        }
+        const response = await fetch(url);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error(`Unable to fetch data. Status: ${response.status}`);
         }
         const data = await response.json();
         if (selectValue === 'All') {
-          try {
-            fetchCountryData();
-          } catch (error) {
-            console.log(error);
-          }
+          fetchCountryData();
           return;
         }
         setCountries(data);
-      };
-      try {
-        fetchSelect();
+
       } catch (error) {
-        console.log(error);
+        console.log(`Error: ${error}`);
       }
-    }
-  };
+    };
+
+    fetchSelect();
+  }
+};
+
+//Show Details of Country //
+const showDetails = (code) => {
+  navigate(`/${code}`);
+}
 return (
     <div className={`app ${darkMode ? 'darkMode' :''}`}>
       {/* Header Section */}
@@ -115,7 +127,7 @@ return (
                   <option>Americas</option>
                   <option>Asia</option>
                   <option>Europe</option>
-                  <option>Ocenia</option>
+                  <option>Oceania</option>
                 </select>
             </div>
           </div>
@@ -127,6 +139,8 @@ return (
                   <Country 
                     darkMode={darkMode}
                     key={country.name.common} {...country}
+                    code={country.cca3}
+                    showDetails={showDetails}
                   />
                 ))
 
@@ -140,8 +154,8 @@ return (
       
          }/>
 
-      <Route path='country-details' element={
-        <CountryDetails darkMode={darkMode}/>
+      <Route path='/:countryCode' element={
+        <CountryDetails darkMode={darkMode} countries={countries}/>
         
 }/>
       </Routes>
