@@ -16,7 +16,7 @@ const Country = ({darkMode,flags,name,region,capital,population,showDetails,code
       <div className="details">
         <h3 className="name">{name.common}</h3>
         <p className='title'> Population:
-        <span className={`values ${darkMode ? 'darkMode' :''}`}>{population}</span>
+        <span className={`values ${darkMode ? 'darkMode' :''}`}>{population.toLocaleString()}</span>
         </p>
         <p className='title'> Capital:
         <span className={`values ${darkMode ? 'darkMode' :''}`}>{capital}</span>

@@ -2,11 +2,12 @@ import React from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate} from 'react-router';
 const CountryDetails = ({darkMode,countries}) => {
+    
     const params = useParams();
     const navigate= useNavigate();
-
+   
     let name ='';
-    let nativeName='';
+    let officialName='';
     let flagImg;
     let population;
     let region;
@@ -15,28 +16,32 @@ const CountryDetails = ({darkMode,countries}) => {
     let topLevelDomain;
     let currencies =[];
     let borders=[];
-    let languages =[];
+     let languages =[]
+
 
     countries.forEach( country =>{
+       
         if(country.cca3 === params.countryCode){
+            const languageList= {...country.languages}     
             name =country.name.common;
-            //Native Name need to be worked on //
-            // nativeName=country.name.nativeName.common//;
+            officialName=country.name.official;
             flagImg = country.flags.svg;
             population = country.population.toLocaleString();
             region = country.region;
             subregion = country.subregion;
-            capital= country.capital[0];
             topLevelDomain = country.tld[0];
+            //currency // 
             currencies = Object.values(country.currencies).map((currency) => currency.name).join(', ');
-            //Borders  need to be worked on //
-            borders = country.borders;
-            //Langauges need to be worked on //
-            languages = Object.values(country.languages).map((language) => language.name).join(', ');
-            
+            //borders//
+            borders=country.borders;
+            //Language Names // 
+            const languageNames = Object.values(languageList).map(language => language).join(', ');
+            languages.push(languageNames)
+                //Capital //
+             capital = country.capital && country.capital.length > 0 ? country.capital[0] : 'N/A';
+      
         }
     });
-
     const goBack=()=>{
         navigate("/")
     }
@@ -56,8 +61,8 @@ const CountryDetails = ({darkMode,countries}) => {
                 
                 <div className="info_container">
                     <div className="left_info">
-                        <p>Native Name : {" "}
-                            <span className={`value ${darkMode ? 'darkMode' :''}`}>{nativeName}</span>
+                        <p>Official Name : {" "}
+                            <span className={`value ${darkMode ? 'darkMode' :''}`}>{officialName}</span>
                         </p>
                         <p>Population: {" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{population}</span>
@@ -81,21 +86,24 @@ const CountryDetails = ({darkMode,countries}) => {
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{currencies}</span>
                         </p>
                         <p>Language :{" "}
-                            <span className={`value ${darkMode ? 'darkMode' :''}`}>{languages}</span>
-                        </p>
+                            <span className={`value ${darkMode ? 'darkMode' :''}`}>{languages}
+                            </span>
+                      </p>
                     </div>
                 </div>
 
                 Border Countries:
-                <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                    <p>{borders[0]}</p>
-                </div>
-                <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                    <p>{borders[1]}</p>
-                </div>
-                <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                    <p>{borders[2]}</p>
-                </div>
+                {borders && borders.length ? (
+                        borders.map(border =>(
+                    <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
+                    <p>{border}</p>
+                    </div>  
+                    ))
+                    ) : (
+                    <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
+                    <p>No Border Countries...</p>
+                    </div>
+                    )}
 
             </div>
         </div>
