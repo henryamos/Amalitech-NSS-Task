@@ -15,7 +15,8 @@ function App() {
   //Search State //
   const countriesInputRef = useRef();
   const regionRef = useRef();
-
+// Loading state //
+const [isLoading, setIsLoading] = useState(false);
   //navigate //
   const navigate = useNavigate()
   //Countries state //
@@ -24,6 +25,7 @@ function App() {
   const noCountries = countries.status || countries.message;
 
   const fetchCountryData = async () => {
+    setIsLoading(true);
     try {
       const response = await fetch(url);
       const data = await response.json();
