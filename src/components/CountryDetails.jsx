@@ -1,6 +1,7 @@
 import React from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate} from 'react-router';
+import { Link } from 'react-router-dom'
 const CountryDetails = ({darkMode,countries}) => {
     
     const params = useParams();
@@ -95,15 +96,17 @@ const CountryDetails = ({darkMode,countries}) => {
                 Border Countries:
                 {borders && borders.length ? (
                         borders.map(border =>(
-                    <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                    <p>{border}</p>
-                    </div>  
+                            <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
+                            <Link to={`/${border}`}>
+                                <p>{border}</p>
+                            </Link>
+                        </div>   
                     ))
                     ) : (
                     <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
                     <p>No Border Countries...</p>
                     </div>
-                    )}
+)}
 
             </div>
         </div>
