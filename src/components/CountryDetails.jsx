@@ -97,7 +97,7 @@ const CountryDetails = ({darkMode,countries}) => {
                 {borders && borders.length ? (
                         borders.map(border =>(
                             <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                            <Link to={`/${border}`}>
+                            <Link className={`link ${darkMode ? 'darkMode' :''}`} to={`/${border}`}>
                                 <p>{border}</p>
                             </Link>
                         </div>   
