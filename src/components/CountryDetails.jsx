@@ -1,11 +1,13 @@
 import React from 'react'
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { useParams, useNavigate} from 'react-router';
-import { Link } from 'react-router-dom'
+import { Link } from 'react-router-dom';
+import { useState,useEffect } from 'react';
 const CountryDetails = ({darkMode,countries}) => {
     
     const params = useParams();
     const navigate= useNavigate();
+    const [borderNames, setBorderNames] = useState([]);
    
     let name ='';
     let officialName='';
@@ -46,12 +48,23 @@ const CountryDetails = ({darkMode,countries}) => {
     const goBack=()=>{
         navigate("/")
     }
-
+    useEffect(() => {
+        if (borders && borders.length) {
+          Promise.all(
+            borders.map(borderCode => {
+              return fetch(`https://restcountries.com/v2/alpha/${borderCode}`)
+                .then(response => response.json())
+                .then(data => data.name)
+                .catch(error => console.log(error));
+            })
+          ).then(names => setBorderNames(names));
+        }
+      }, [borders]);
   return (
     <div className='country_details'>
         <button className={`back ${darkMode ? 'darkMode' :''}`} onClick={goBack}>
             <ArrowBackIcon/>
-            <p>Go Back</p>
+            <p >Go Back</p>
         </button>
         <div className="country_details_body">
             <div className="img_container">
@@ -62,47 +75,47 @@ const CountryDetails = ({darkMode,countries}) => {
                 
                 <div className="info_container">
                     <div className="left_info">
-                        <p>Official Name : {" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Official Name : {" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{officialName}</span>
                         </p>
-                        <p>Population: {" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Population: {" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{population}</span>
                         </p>
-                        <p>Region : {" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Region : {" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{region}</span>
                         </p>
-                        <p>Sub region : {" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Sub region : {" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{subregion}</span>
                         </p>
-
-                    </div>
-                    <div className="right_info">
-                       <p>Capital :{" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Capital :{" "}
                         <span className={`value ${darkMode ? 'darkMode' :''}`}>{capital}</span>
                         </p>
-                        <p>Top Level Domain :{" "}
+                    </div>
+                    <div className="right_info">
+                       
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Top Level Domain :{" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{topLevelDomain}</span>
                         </p>
-                        <p>Currencies :{" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Currencies :{" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{currencies}</span>
                         </p>
-                        <p>Language :{" "}
+                        <p className={`title ${darkMode ? 'darkMode' :''}`}>Language :{" "}
                             <span className={`value ${darkMode ? 'darkMode' :''}`}>{languages}
                             </span>
                       </p>
                     </div>
                 </div>
 
-                Border Countries:
+               <h4> Border Countries:</h4>
                 {borders && borders.length ? (
-                        borders.map(border =>(
-                            <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
-                            <Link className={`link ${darkMode ? 'darkMode' :''}`} to={`/${border}`}>
-                                <p>{border}</p>
-                            </Link>
-                        </div>   
-                    ))
-                    ) : (
+                  borders.map((border, index) => (
+                 <div key={border} className={`border_country ${darkMode ? 'darkMode' : ''}`}>
+                 <Link className={`link ${darkMode ? 'darkMode' : ''}`} to={`/${border}`}>
+                <p >{borderNames[index]}</p>
+                </Link>
+                 </div>
+                 ))
+                 ) : (
                     <div className={`border_country ${darkMode ? 'darkMode' :''}`}>
                     <p>No Border Countries...</p>
                     </div>
